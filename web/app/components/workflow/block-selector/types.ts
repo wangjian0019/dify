@@ -8,6 +8,7 @@ export enum ToolTypeEnum {
   BuiltIn = 'built-in',
   Custom = 'custom',
   Workflow = 'workflow',
+  Industrial = 'industrial',
 }
 
 export enum BlockClassificationEnum {

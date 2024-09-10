@@ -51,5 +51,9 @@ export const useToolTabs = () => {
       key: ToolTypeEnum.Workflow,
       name: t('workflow.tabs.workflowTool'),
     },
+    {
+      key: ToolTypeEnum.Industrial,
+      name: t('workflow.tabs.industrialTool'),
+    },
   ]
 }

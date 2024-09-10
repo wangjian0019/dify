@@ -199,6 +199,7 @@ const translation = {
     'customTool': '自定义',
     'workflowTool': '工作流',
     'question-understand': '问题理解',
+    'industrialTool': '工业自动化',
     'logic': '逻辑',
     'transform': '转换',
     'utilities': '工具',
