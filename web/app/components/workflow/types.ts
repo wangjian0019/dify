@@ -28,6 +28,7 @@ export enum BlockEnum {
   Iteration = 'iteration',
   IterationStart = 'iteration-start',
   Assigner = 'assigner', // is now named as VariableAssigner
+  KnowledgeGraph = 'knowledge-graph',
 }
 
 export enum ControlMode {

@@ -259,6 +259,10 @@ class HttpExecutor:
             response = getattr(ssrf_proxy, self.method)(data=self.body, files=self.files, **kwargs)
         else:
             raise ValueError(f'Invalid http method {self.method}')
+        
+        #为了返回的中文不是乱码，需要设置编码
+        response.encoding = 'unicode_escape'
+        
         return response
 
     def invoke(self) -> HttpExecutorResponse:

@@ -1,6 +1,7 @@
 import produce from 'immer'
 import { isArray, uniq } from 'lodash-es'
 import type { CodeNodeType } from '../../../code/types'
+import type { KnowledgeGraphNodeType } from '../../../knowledge-graph/types'
 import type { EndNodeType } from '../../../end/types'
 import type { AnswerNodeType } from '../../../answer/types'
 import type { LLMNodeType } from '../../../llm/types'
@@ -133,6 +134,21 @@ const formatItem = (
       const {
         outputs,
       } = data as CodeNodeType
+      res.vars = outputs
+        ? Object.keys(outputs).map((key) => {
+          return {
+            variable: key,
+            type: outputs[key].type,
+          }
+        })
+        : []
+      break
+    }
+
+    case BlockEnum.KnowledgeGraph: {
+      const {
+        outputs,
+      } = data as KnowledgeGraphNodeType
       res.vars = outputs
         ? Object.keys(outputs).map((key) => {
           return {
@@ -600,6 +616,12 @@ export const getNodeUsedVars = (node: Node): ValueSelector[] => {
       })
       break
     }
+    case BlockEnum.KnowledgeGraph: {
+      res = (data as KnowledgeGraphNodeType).variables?.map((v) => {
+        return v.value_selector
+      })
+      break
+    }
     case BlockEnum.TemplateTransform: {
       res = (data as TemplateTransformNodeType).variables?.map((v: any) => {
         return v.value_selector
@@ -678,6 +700,12 @@ export const getNodeUsedVarPassToServerKey = (node: Node, valueSelector: ValueSe
     }
     case BlockEnum.Code: {
       const targetVar = (data as CodeNodeType).variables?.find(v => v.value_selector.join('.') === valueSelector.join('.'))
+      if (targetVar)
+        res = targetVar.variable
+      break
+    }
+    case BlockEnum.KnowledgeGraph: {
+      const targetVar = (data as KnowledgeGraphNodeType).variables?.find(v => v.value_selector.join('.') === valueSelector.join('.'))
       if (targetVar)
         res = targetVar.variable
       break
@@ -801,6 +829,17 @@ export const updateNodeVars = (oldNode: Node, oldVarSelector: ValueSelector, new
       }
       case BlockEnum.Code: {
         const payload = data as CodeNodeType
+        if (payload.variables) {
+          payload.variables = payload.variables.map((v) => {
+            if (v.value_selector.join('.') === oldVarSelector.join('.'))
+              v.value_selector = newVarSelector
+            return v
+          })
+        }
+        break
+      }
+      case BlockEnum.KnowledgeGraph: {
+        const payload = data as KnowledgeGraphNodeType
         if (payload.variables) {
           payload.variables = payload.variables.map((v) => {
             if (v.value_selector.join('.') === oldVarSelector.join('.'))
@@ -957,6 +996,16 @@ export const getNodeOutputVars = (node: Node, isChatMode: boolean): ValueSelecto
       const {
         outputs,
       } = data as CodeNodeType
+      Object.keys(outputs).forEach((key) => {
+        res.push([id, key])
+      })
+      break
+    }
+
+    case BlockEnum.KnowledgeGraph: {
+      const {
+        outputs,
+      } = data as KnowledgeGraphNodeType
       Object.keys(outputs).forEach((key) => {
         res.push([id, key])
       })

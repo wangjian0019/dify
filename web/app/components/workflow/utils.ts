@@ -357,6 +357,7 @@ export const canRunBySingle = (nodeType: BlockEnum) => {
   return nodeType === BlockEnum.LLM
     || nodeType === BlockEnum.KnowledgeRetrieval
     || nodeType === BlockEnum.Code
+    || nodeType === BlockEnum.KnowledgeGraph
     || nodeType === BlockEnum.TemplateTransform
     || nodeType === BlockEnum.QuestionClassifier
     || nodeType === BlockEnum.HttpRequest

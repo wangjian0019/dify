@@ -193,6 +193,7 @@ azure-ai-inference = "^1.0.0b3"
 volcengine-python-sdk = {extras = ["ark"], version = "^1.0.98"}
 oci = "^2.133.0"
 tos = "^2.7.1"
+autogen-agentchat = ">=0.2,<1.0"
 [tool.poetry.group.indriect.dependencies]
 kaleido = "0.2.1"
 rank-bm25 = "~0.2.2"

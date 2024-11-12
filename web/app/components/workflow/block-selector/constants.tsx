@@ -74,6 +74,11 @@ export const BLOCKS: Block[] = [
     type: BlockEnum.HttpRequest,
     title: 'HTTP Request',
   },
+  {
+    classification: BlockClassificationEnum.Industrial,
+    type: BlockEnum.KnowledgeGraph,
+    title: 'Knowledge Graph',
+  },
 ]
 
 export const BLOCK_CLASSIFICATIONS: string[] = [
@@ -82,4 +87,5 @@ export const BLOCK_CLASSIFICATIONS: string[] = [
   BlockClassificationEnum.Logic,
   BlockClassificationEnum.Transform,
   BlockClassificationEnum.Utilities,
+  BlockClassificationEnum.Industrial,
 ]

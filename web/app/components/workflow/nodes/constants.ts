@@ -16,6 +16,8 @@ import IfElseNode from './if-else/node'
 import IfElsePanel from './if-else/panel'
 import CodeNode from './code/node'
 import CodePanel from './code/panel'
+import KnowledgeGraphNode from './knowledge-graph/node'
+import KnowledgeGraphPanel from './knowledge-graph/panel'
 import TemplateTransformNode from './template-transform/node'
 import TemplateTransformPanel from './template-transform/panel'
 import HttpNode from './http/node'
@@ -40,6 +42,7 @@ export const NodeComponentMap: Record<string, ComponentType<any>> = {
   [BlockEnum.QuestionClassifier]: QuestionClassifierNode,
   [BlockEnum.IfElse]: IfElseNode,
   [BlockEnum.Code]: CodeNode,
+  [BlockEnum.KnowledgeGraph]: KnowledgeGraphNode,
   [BlockEnum.TemplateTransform]: TemplateTransformNode,
   [BlockEnum.HttpRequest]: HttpNode,
   [BlockEnum.Tool]: ToolNode,
@@ -59,6 +62,7 @@ export const PanelComponentMap: Record<string, ComponentType<any>> = {
   [BlockEnum.QuestionClassifier]: QuestionClassifierPanel,
   [BlockEnum.IfElse]: IfElsePanel,
   [BlockEnum.Code]: CodePanel,
+  [BlockEnum.KnowledgeGraph]: KnowledgeGraphPanel,
   [BlockEnum.TemplateTransform]: TemplateTransformPanel,
   [BlockEnum.HttpRequest]: HttpPanel,
   [BlockEnum.Tool]: ToolPanel,

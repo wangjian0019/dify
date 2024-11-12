@@ -19,6 +19,7 @@ import LLMDefault from '@/app/components/workflow/nodes/llm/default'
 import KnowledgeRetrievalDefault from '@/app/components/workflow/nodes/knowledge-retrieval/default'
 import IfElseDefault from '@/app/components/workflow/nodes/if-else/default'
 import CodeDefault from '@/app/components/workflow/nodes/code/default'
+import KnowledgeGraphDefault from '@/app/components/workflow/nodes/knowledge-graph/default'
 import TemplateTransformDefault from '@/app/components/workflow/nodes/template-transform/default'
 import QuestionClassifyDefault from '@/app/components/workflow/nodes/question-classifier/default'
 import HTTPDefault from '@/app/components/workflow/nodes/http/default'
@@ -34,6 +35,7 @@ const { checkValid: checkLLMValid } = LLMDefault
 const { checkValid: checkKnowledgeRetrievalValid } = KnowledgeRetrievalDefault
 const { checkValid: checkIfElseValid } = IfElseDefault
 const { checkValid: checkCodeValid } = CodeDefault
+const { checkValid: checkKnowledgeGraphValid } = KnowledgeGraphDefault
 const { checkValid: checkTemplateTransformValid } = TemplateTransformDefault
 const { checkValid: checkQuestionClassifyValid } = QuestionClassifyDefault
 const { checkValid: checkHttpValid } = HTTPDefault
@@ -47,6 +49,7 @@ const checkValidFns: Record<BlockEnum, Function> = {
   [BlockEnum.KnowledgeRetrieval]: checkKnowledgeRetrievalValid,
   [BlockEnum.IfElse]: checkIfElseValid,
   [BlockEnum.Code]: checkCodeValid,
+  [BlockEnum.KnowledgeGraph]: checkKnowledgeGraphValid,
   [BlockEnum.TemplateTransform]: checkTemplateTransformValid,
   [BlockEnum.QuestionClassifier]: checkQuestionClassifyValid,
   [BlockEnum.HttpRequest]: checkHttpValid,

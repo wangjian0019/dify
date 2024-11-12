@@ -17,6 +17,7 @@ export enum BlockClassificationEnum {
   Logic = 'logic',
   Transform = 'transform',
   Utilities = 'utilities',
+  Industrial = 'industrial',
 }
 
 export type ToolDefaultValue = {

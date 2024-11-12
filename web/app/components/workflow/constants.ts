@@ -16,6 +16,7 @@ import AssignerDefault from './nodes/assigner/default'
 import EndNodeDefault from './nodes/end/default'
 import IterationDefault from './nodes/iteration/default'
 import IterationStartDefault from './nodes/iteration-start/default'
+import KnowledgeGraphDefault from './nodes/knowledge-graph/default'
 
 type NodesExtraData = {
   author: string
@@ -180,6 +181,15 @@ export const NODES_EXTRA_DATA: Record<BlockEnum, NodesExtraData> = {
     getAvailableNextNodes: ToolDefault.getAvailableNextNodes,
     checkValid: ToolDefault.checkValid,
   },
+  [BlockEnum.KnowledgeGraph]: {
+    author: 'SIA',
+    about: '',
+    availablePrevNodes: [],
+    availableNextNodes: [],
+    getAvailablePrevNodes: KnowledgeGraphDefault.getAvailablePrevNodes,
+    getAvailableNextNodes: KnowledgeGraphDefault.getAvailableNextNodes,
+    checkValid: KnowledgeGraphDefault.checkValid,
+  },
 }
 
 export const ALL_CHAT_AVAILABLE_BLOCKS = Object.keys(NODES_EXTRA_DATA).filter(key => key !== BlockEnum.End && key !== BlockEnum.Start) as BlockEnum[]
@@ -306,6 +316,22 @@ export const NODES_INITIAL_DATA = {
     desc: '',
     ...ToolDefault.defaultValue,
   },
+  // [BlockEnum.KnowledgeGraph]: {
+  //   type: BlockEnum.KnowledgeGraph,
+  //   title: '',
+  //   desc: '',
+  //   ...KnowledgeGraphDefault.defaultValue,
+  // },
+  [BlockEnum.KnowledgeGraph]: {
+    type: BlockEnum.KnowledgeGraph,
+    title: '',
+    desc: '',
+    variables: [],
+    code_language: 'python3',
+    code: '',
+    outputs: [],
+    ...KnowledgeGraphDefault.defaultValue,
+  },
 }
 
 export const NODE_WIDTH = 240
@@ -352,7 +378,7 @@ export const RETRIEVAL_OUTPUT_STRUCT = `{
 export const SUPPORT_OUTPUT_VARS_NODE = [
   BlockEnum.Start, BlockEnum.LLM, BlockEnum.KnowledgeRetrieval, BlockEnum.Code, BlockEnum.TemplateTransform,
   BlockEnum.HttpRequest, BlockEnum.Tool, BlockEnum.VariableAssigner, BlockEnum.VariableAggregator, BlockEnum.QuestionClassifier,
-  BlockEnum.ParameterExtractor, BlockEnum.Iteration,
+  BlockEnum.ParameterExtractor, BlockEnum.Iteration, BlockEnum.KnowledgeGraph,
 ]
 
 export const LLM_OUTPUT_STRUCT: Var[] = [

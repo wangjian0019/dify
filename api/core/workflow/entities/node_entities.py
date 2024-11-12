@@ -31,6 +31,7 @@ class NodeType(Enum):
     ITERATION_START = 'iteration-start'  # fake start node for iteration
     PARAMETER_EXTRACTOR = 'parameter-extractor'
     CONVERSATION_VARIABLE_ASSIGNER = 'assigner'
+    KNOWLEDGE_GRAPH = 'knowledge-graph'
 
     @classmethod
     def value_of(cls, value: str) -> 'NodeType':

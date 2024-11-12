@@ -15,6 +15,7 @@ from core.workflow.nodes.template_transform.template_transform_node import Templ
 from core.workflow.nodes.tool.tool_node import ToolNode
 from core.workflow.nodes.variable_aggregator.variable_aggregator_node import VariableAggregatorNode
 from core.workflow.nodes.variable_assigner import VariableAssignerNode
+from core.workflow.nodes.knowledge_graph.knowledge_graph_node import KnowledgeGraphNode
 
 node_classes = {
     NodeType.START: StartNode,
@@ -34,4 +35,5 @@ node_classes = {
     NodeType.ITERATION_START: IterationStartNode,
     NodeType.PARAMETER_EXTRACTOR: ParameterExtractorNode,
     NodeType.CONVERSATION_VARIABLE_ASSIGNER: VariableAssignerNode,
+    NodeType.KNOWLEDGE_GRAPH: KnowledgeGraphNode,
 }

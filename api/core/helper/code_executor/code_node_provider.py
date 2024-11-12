@@ -22,9 +22,9 @@ class CodeNodeProvider(BaseModel):
         pass
 
     @classmethod
-    def get_default_config(cls) -> dict:
+    def get_default_config(cls, type: str = "code") -> dict:
         return {
-            "type": "code",
+            "type": type,
             "config": {
                 "variables": [
                     {

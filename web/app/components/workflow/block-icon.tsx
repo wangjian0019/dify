@@ -10,6 +10,7 @@ import {
   Http,
   IfElse,
   Iteration,
+  KnowledgeGraph,
   KnowledgeRetrieval,
   Llm,
   ParameterExtractor,
@@ -48,6 +49,7 @@ const getIcon = (type: BlockEnum, className: string) => {
     [BlockEnum.Tool]: <VariableX className={className} />,
     [BlockEnum.Iteration]: <Iteration className={className} />,
     [BlockEnum.ParameterExtractor]: <ParameterExtractor className={className} />,
+    [BlockEnum.KnowledgeGraph]: <KnowledgeGraph className={className} />,
   }[type]
 }
 const ICON_CONTAINER_BG_COLOR_MAP: Record<string, string> = {
@@ -66,6 +68,7 @@ const ICON_CONTAINER_BG_COLOR_MAP: Record<string, string> = {
   [BlockEnum.VariableAggregator]: 'bg-[#2E90FA]',
   [BlockEnum.Assigner]: 'bg-[#2E90FA]',
   [BlockEnum.ParameterExtractor]: 'bg-[#2E90FA]',
+  [BlockEnum.KnowledgeGraph]: 'bg-[#6172F3]',
 }
 const BlockIcon: FC<BlockIconProps> = ({
   type,

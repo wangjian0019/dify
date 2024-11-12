@@ -8,13 +8,13 @@ from core.helper.code_executor.javascript.javascript_code_provider import Javasc
 from core.helper.code_executor.python3.python3_code_provider import Python3CodeProvider
 from core.workflow.entities.node_entities import NodeRunResult, NodeType
 from core.workflow.nodes.base_node import BaseNode
-from core.workflow.nodes.code.entities import CodeNodeData
+from core.workflow.nodes.knowledge_graph.entities import KnowledgeGraphNodeData
 from models.workflow import WorkflowNodeExecutionStatus
 
 
-class CodeNode(BaseNode):
-    _node_data_cls = CodeNodeData
-    _node_type = NodeType.CODE
+class KnowledgeGraphNode(BaseNode):
+    _node_data_cls = KnowledgeGraphNodeData
+    _node_type = NodeType.KNOWLEDGE_GRAPH
 
     @classmethod
     def get_default_config(cls, filters: Optional[dict] = None) -> dict:
@@ -31,7 +31,7 @@ class CodeNode(BaseNode):
         code_provider: type[CodeNodeProvider] = next(p for p in providers
                                                      if p.is_accept_language(code_language))
 
-        return code_provider.get_default_config("code")
+        return code_provider.get_default_config("knowledge-graph")
 
     def _run(self) -> NodeRunResult:
         """
@@ -39,7 +39,7 @@ class CodeNode(BaseNode):
         :return:
         """
         node_data = self.node_data
-        node_data = cast(CodeNodeData, node_data)
+        node_data = cast(KnowledgeGraphNodeData, node_data)
 
         # Get code language
         code_language = node_data.code_language
@@ -119,7 +119,7 @@ class CodeNode(BaseNode):
 
         return value
 
-    def _transform_result(self, result: dict, output_schema: Optional[dict[str, CodeNodeData.Output]],
+    def _transform_result(self, result: dict, output_schema: Optional[dict[str, KnowledgeGraphNodeData.Output]],
                           prefix: str = '',
                           depth: int = 1) -> dict:
         """
@@ -315,7 +315,7 @@ class CodeNode(BaseNode):
         cls,
         graph_config: Mapping[str, Any],
         node_id: str,
-        node_data: CodeNodeData
+        node_data: KnowledgeGraphNodeData
     ) -> Mapping[str, Sequence[str]]:
         """
         Extract variable selector to variable mapping
