@@ -40,7 +40,7 @@ from autogen.cache import Cache
 config_list = [
     {
         'model': 'gpt-4o',
-        'api_key': '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',
+        'api_key': '',
         'tags': ['tool', '4o-tool'],
     }
 ]
