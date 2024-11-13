@@ -40,7 +40,8 @@ from autogen.cache import Cache
 config_list = [
     {
         'model': 'gpt-4o',
-        'api_key': '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',
+        #GitHub不允许提交私钥，所以这里需要自行替换一下
+        'api_key': '',
         'tags': ['tool', '4o-tool'],
     }
 ]
@@ -52,6 +53,12 @@ llm_config = {
 
 gateway_assistant = autogen.AssistantAgent(
     name="gateway_assistant",
+    system_message="你是一个人工助手，可以根据所具备的工具处理与模板管理相关的工作，请将详细的思考过程打印出来",
+    llm_config=llm_config
+)
+
+gateway_assistant_sub = autogen.AssistantAgent(
+    name="gateway_assistant_sub",
     system_message="你是一个人工助手，可以根据所具备的工具处理与模板管理相关的工作，请将详细的思考过程打印出来",
     llm_config=llm_config
 )
@@ -122,8 +129,27 @@ def struct_ret(result):
     }
     return ret
 
+def format_response(chat_result):
+    history = chat_result.chat_history
+    
+    if not history:
+        return "AutoGenStart无法回答您的问题，请重新提问AutoGenEnd"
+    
+    if len(history) > 0:
+        result_1 = history[-1]["content"]
+        if result_1 != "TERMINATE":
+            return "AutoGenStart" + result_1 + "AutoGenEnd"
+        elif len(history) > 1:
+            result_2 = history[-2]["content"]
+            return "AutoGenStart" + result_2 + "AutoGenEnd"
+        else:
+            return "AutoGenStart无法回答您的问题，请重新提问AutoGenEnd"
+    else:
+        return "AutoGenStart无法回答您的问题，请重新提问AutoGenEnd"
+
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="根据模板id获取模板的详细信息")
+@gateway_assistant_sub.register_for_llm(description="根据模板id获取模板的详细信息")
 def get_template_by_id(
     id: Annotated[str, "模板id"]
 )-> dict:
@@ -133,6 +159,7 @@ def get_template_by_id(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="获取所有模板信息")
+@gateway_assistant_sub.register_for_llm(description="获取所有模板信息")
 def get_all_templates()-> dict:
     import requests
     result = requests.post(url + "/manager/profile/list", json={}, headers=header)
@@ -140,6 +167,7 @@ def get_all_templates()-> dict:
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="创建模板")
+@gateway_assistant_sub.register_for_llm(description="创建模板")
 def add_template(
     profileName: Annotated[str, "模板名称，不能包含空格"],
     remark: Annotated[str, "模板备注"]
@@ -154,6 +182,7 @@ def add_template(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="编辑模板信息")
+@gateway_assistant_sub.register_for_llm(description="编辑模板信息")
 def update_template(
     id: Annotated[str, "ID (字符串类型，必填)"],
     profileName: Annotated[str, "模板名称 (字符串类型，必填，不能包含空格)"],
@@ -202,6 +231,7 @@ def update_template(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="根据id删除模板")
+@gateway_assistant_sub.register_for_llm(description="根据id删除模板")
 def delete_template_by_id(
     id: Annotated[str, "模板id"]
 )-> dict:
@@ -211,6 +241,7 @@ def delete_template_by_id(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="为模板增加点（即位号）")
+@gateway_assistant_sub.register_for_llm(description="为模板增加点（即位号）")
 def add_point(
     profileId: Annotated[str, "模板ID (字符串类型，必填)"],
     pointName: Annotated[str, "位号名称 (字符串类型，必填，不能包含空格)"],
@@ -265,6 +296,7 @@ def add_point(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="编辑点（即位号）信息")
+@gateway_assistant_sub.register_for_llm(description="编辑点（即位号）信息")
 def update_point(
     enableFlag: Annotated[str, "启用标志 (字符串类型，必填，必须是 ENABLE 或 DISABLE)"],
     id: Annotated[str, "ID (字符串类型，必填)"],
@@ -310,6 +342,7 @@ def update_point(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="获取模板下所有点（即位号）信息")
+@gateway_assistant_sub.register_for_llm(description="获取模板下所有点（即位号）信息")
 def get_profile_all_points(
     profileId: Annotated[str, "模板ID"]
 )-> dict:
@@ -322,6 +355,7 @@ def get_profile_all_points(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="根据id删除点（即位号）")
+@gateway_assistant_sub.register_for_llm(description="根据id删除点（即位号）")
 def delete_point_by_id(
     id: Annotated[str, "点（即位号）id"]
 )-> dict:
@@ -331,6 +365,7 @@ def delete_point_by_id(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="获取所有驱动信息")
+@gateway_assistant_sub.register_for_llm(description="获取所有驱动信息")
 def get_all_drivers()-> dict:
     import requests
     result = requests.post(url + "/manager/driver/list", json={}, headers=header)
@@ -338,6 +373,7 @@ def get_all_drivers()-> dict:
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="获取所有设备信息")
+@gateway_assistant_sub.register_for_llm(description="获取所有设备信息")
 def get_all_devices()-> dict:
     import requests
     result = requests.post(url + "/manager/device/list", json={}, headers=header)
@@ -345,6 +381,7 @@ def get_all_devices()-> dict:
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="创建设备，设备需要关联驱动和模板")
+@gateway_assistant_sub.register_for_llm(description="创建设备，设备需要关联驱动和模板")
 def add_device(
     driverId: Annotated[str, "驱动ID (字符串类型，必填)"],
     deviceName: Annotated[str, "设备名称 (字符串类型，必填，不能包含空格)"],
@@ -371,6 +408,7 @@ def add_device(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="更新设备信息")
+@gateway_assistant_sub.register_for_llm(description="更新设备信息")
 def update_device(
     id: Annotated[str, "设备ID (字符串类型，必填)"],
     driverId: Annotated[str, "驱动ID (字符串类型，必填)"],
@@ -413,6 +451,7 @@ def update_device(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="获取设备的点（即位号）信息")
+@gateway_assistant_sub.register_for_llm(description="获取设备的点（即位号）信息")
 def get_device_all_points(
     deviceId: Annotated[str, "设备id"]
 )-> dict:
@@ -422,6 +461,7 @@ def get_device_all_points(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="根据id删除设备")
+@gateway_assistant_sub.register_for_llm(description="根据id删除设备")
 def delete_device_by_id(
     id: Annotated[str, "设备id"]
 )-> dict:
@@ -431,6 +471,7 @@ def delete_device_by_id(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="修改设备设备下某个点（即位号）的配置，配置项是从站编号、功能码和偏移量")
+@gateway_assistant_sub.register_for_llm(description="修改设备设备下某个点（即位号）的配置，配置项是从站编号、功能码和偏移量")
 def config_device_point(
     deviceId: Annotated[str, "设备ID (字符串类型，必填)"],
     pointId: Annotated[str, "位号ID (字符串类型，必填)"],
@@ -475,31 +516,32 @@ def config_device_point(
 
 @gateway_userproxy.register_for_execution()
 @gateway_assistant.register_for_llm(description="通过查询文档获取设备点位的具体配置信息")
+@gateway_assistant_sub.register_for_llm(description="通过查询文档获取设备点位的具体配置信息")
 def get_device_points_config_from_document(
     problem: Annotated[str, "查询内容 (字符串类型，必填)"],
 )-> dict:
     chat_result = rag_gateway_userproxy.initiate_chat(
         gateway_assistant, message = rag_gateway_userproxy.message_generator, problem = problem
     )
-    return chat_result.chat_history[-1]
+    return chat_result.chat_history
 
-def format_response(chat_result):
-    history = chat_result.chat_history
-    
-    if not history:
-        return "AutoGenStart无法回答您的问题，请重新提问AutoGenEnd"
-    
-    if len(history) > 0:
-        result_1 = history[-1]["content"]
-        if result_1 != "TERMINATE":
-            return "AutoGenStart" + result_1 + "AutoGenEnd"
-        elif len(history) > 1:
-            result_2 = history[-2]["content"]
-            return "AutoGenStart" + result_2 + "AutoGenEnd"
-        else:
-            return "AutoGenStart无法回答您的问题，请重新提问AutoGenEnd"
-    else:
-        return "AutoGenStart无法回答您的问题，请重新提问AutoGenEnd"
+@gateway_userproxy.register_for_execution()
+@gateway_assistant.register_for_llm(description="根据文档中的内容生成系统中的模板、点位、设备等对象")
+def generate_objects_base_document(
+    device_name: Annotated[str, "设备名称"],
+    device_points: Annotated[str, "设备点位"],
+    others: Annotated[str, "其他要求"] = "无",
+)-> dict:
+    chat_result = gateway_userproxy.initiate_chat(
+        gateway_assistant_sub, message="本次数据采集的对象是" + device_name +"。"
+        "先在文档中查询设备的点位配置，本次需要采集的点位包括" + device_points + "，（调用get_device_points_config_from_document工具）。"
+        "根据点位配置创建模板，然后为模板创建点位，（调用add_template、add_point等工具）。"
+        "接着创建设备，如果涉及到设备的驱动，则需要从文档中进行查找，（调用add_device等工具）。"
+        "最后，根据文档中的点位配置依次配置点位信息，（这里需要先调用get_device_all_points，找到设备有哪些需要配置的点位，然后再调用config_device_point进行配置）。"
+        "生成的各种字符串的命名尽量使用中文，其他要求和说明如下：" + others
+        , summary_method="reflection_with_llm"
+    )
+    return chat_result.chat_history
     
 
 class BasicApi(Resource):
@@ -579,4 +621,19 @@ api.add_resource(BasicApi, "/apps/agent/autogen/http/v1/basic_chat/<string:messa
 api.add_resource(RAGChatApi, "/apps/agent/autogen/http/v1/rag_chat/<string:problem>")
 api.add_resource(OneStepApi, "/apps/agent/autogen/http/v1/one_step")
 
+class AutoGenChatApi(Resource):
+    def post(self, message: str):
+        """
+        AutoGen聊天
+        """
+        chat_result = gateway_userproxy.initiate_chat(
+            gateway_assistant, message = message, summary_method = "reflection_with_llm"
+        )
+        
+        result = {
+            "chat_result": format_response(chat_result)
+        }
 
+        return result
+
+api.add_resource(AutoGenChatApi, "/apps/agent/autogen/http/v2/autogen_chat/<string:message>")
