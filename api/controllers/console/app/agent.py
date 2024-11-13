@@ -40,7 +40,7 @@ from autogen.cache import Cache
 config_list = [
     {
         'model': 'gpt-4o',
-        #GitHub不允许提交私钥，所以这里需要自行增加一下
+        'api_key': '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',
         'tags': ['tool', '4o-tool'],
     }
 ]
