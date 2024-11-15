@@ -62,6 +62,12 @@ gateway_assistant_sub = autogen.AssistantAgent(
     llm_config=llm_config
 )
 
+gateway_assistant_sub_sub = autogen.AssistantAgent(
+    name="gateway_assistant_sub_sub",
+    system_message="你是一个人工助手，可以根据所具备的工具处理与模板管理相关的工作，请将详细的思考过程打印出来",
+    llm_config=llm_config
+)
+
 gateway_userproxy = autogen.UserProxyAgent(
     name="gateway_userproxy",
     system_message="你是一个人工助手，可以帮助解决与网关管理的相关工作。你需要将具体的问题打印出来，尽可能详细的描述，这样助手才能了解到具体的问题",
@@ -520,7 +526,7 @@ def get_device_points_config_from_document(
     problem: Annotated[str, "查询内容 (字符串类型，必填)"],
 )-> dict:
     chat_result = rag_gateway_userproxy.initiate_chat(
-        gateway_assistant, message = rag_gateway_userproxy.message_generator, problem = problem
+        gateway_assistant_sub_sub, message = rag_gateway_userproxy.message_generator, problem = problem
     )
     return chat_result.chat_history
 
@@ -620,11 +626,39 @@ api.add_resource(BasicApi, "/apps/agent/autogen/http/v1/basic_chat/<string:messa
 api.add_resource(RAGChatApi, "/apps/agent/autogen/http/v1/rag_chat/<string:problem>")
 api.add_resource(OneStepApi, "/apps/agent/autogen/http/v1/one_step")
 
+from extensions.ext_database import db
+from models.model import Conversation
+import json
+
 class AutoGenChatApi(Resource):
     def post(self, message: str):
         """
         AutoGen聊天
         """
+        
+        data = request.get_json()
+        
+        conversation_id = data.get("conversation_id")
+        
+        chat_history = []
+        if conversation_id:
+            conversation = db.session.query(Conversation).filter(
+                Conversation.id == conversation_id
+            ).first()
+            con_messages = sorted(conversation.messages, key=lambda x: x.created_at)
+            if len(con_messages) > 1:
+                for i in range(len(con_messages) - 1):
+                    mes = {}
+                    mes["seq"] = i + 1
+                    mes["create_time"] = con_messages[i].created_at.strftime('%Y-%m-%d %H:%M:%S')
+                    mes["query"] = con_messages[i].query
+                    mes["answer"] = con_messages[i].answer
+                    chat_history.append(mes)
+        
+        chat_history_str = json.dumps(chat_history, ensure_ascii=False)
+        
+        message = "以下引号中是我的问题：”" + message + "“！！！注意，历史对话是：" + chat_history_str + "！！！"
+        
         chat_result = gateway_userproxy.initiate_chat(
             gateway_assistant, message = message, summary_method = "reflection_with_llm"
         )
